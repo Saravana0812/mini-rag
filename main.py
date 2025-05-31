@@ -17,18 +17,19 @@ def streamlit_interface():
         step=1
     )
 
-    uploaded_file = st.sidebar.file_uploader("Upload a new document (.txt or .pdf)", type=["txt", "pdf"])
-    if uploaded_file is not None:
-        # Ensure the documents directory exists for uploaded files
+    uploaded_files = st.sidebar.file_uploader("Upload a new document (.txt or .pdf)", type=["txt", "pdf"],accept_multiple_files=True)
+    if uploaded_files:
         os.makedirs(DOCUMENTS_DIR, exist_ok=True)
-        file_path = os.path.join(DOCUMENTS_DIR, uploaded_file.name)
-        with open(file_path, "wb") as f:
-            f.write(uploaded_file.getbuffer())
-        st.sidebar.success(f"Uploaded {uploaded_file.name} to documents folder.")
+        for uploaded_file in uploaded_files:
+            file_path = os.path.join(DOCUMENTS_DIR, uploaded_file.name)
+            with open(file_path, "wb") as f:
+                f.write(uploaded_file.getbuffer())
+            st.sidebar.success(f"Uploaded {uploaded_file.name} to documents folder.")
 
     if st.sidebar.button("Update"):
         st.session_state.qa_chain = initialize_rag_components(k_retrieval_value)
         st.session_state.k_retrieval_cached = k_retrieval_value
+        st.success("Updates complete!")
 
     if "qa_chain" not in st.session_state:
         try:
