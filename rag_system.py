@@ -8,6 +8,7 @@ from langchain.chains import RetrievalQA
 from langchain_community.llms import HuggingFacePipeline
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 from langchain_core.prompts import ChatPromptTemplate
+from transformers import AutoModelForSeq2SeqLM
 
 
 ### Models ###
@@ -62,7 +63,6 @@ def create_vector_store(chunks, embedding_model_name, vector_db_path):
 # setup RAG qa-chain
 def setup_rag_chain(vectorstore, llm_model_name, k_retrieval=4):
     tokenizer = AutoTokenizer.from_pretrained(llm_model_name)
-    from transformers import AutoModelForSeq2SeqLM
     model = AutoModelForSeq2SeqLM.from_pretrained(llm_model_name)
 
     pipe = pipeline(
